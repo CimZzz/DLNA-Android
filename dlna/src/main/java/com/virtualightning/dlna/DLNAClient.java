@@ -1,12 +1,19 @@
 package com.virtualightning.dlna;
 
-import java.io.File;
-
 import com.virtualightning.dlna.factory.ThreadPoolFactory;
-import com.virtualightning.dlna.interfaces.callback.*;
+import com.virtualightning.dlna.interfaces.callback.OnBootstrapCompletedListener;
+import com.virtualightning.dlna.interfaces.callback.OnCommandExecListener;
+import com.virtualightning.dlna.interfaces.callback.OnDeviceQuitListener;
+import com.virtualightning.dlna.interfaces.callback.OnErrorListener;
+import com.virtualightning.dlna.interfaces.callback.OnFindDeviceListener;
+import com.virtualightning.dlna.interfaces.callback.OnResourceRouteListener;
+import com.virtualightning.dlna.interfaces.callback.OnServiceInfoListener;
+import com.virtualightning.dlna.interfaces.callback.OnSubscribeEventListener;
 import com.virtualightning.dlna.interfaces.option.DeviceFilter;
 import com.virtualightning.dlna.interfaces.option.InetAddressGetter;
 import com.virtualightning.dlna.interfaces.option.XmlDecoder;
+
+import java.io.File;
 
 public class DLNAClient {
     private static final int DEFAULT_HTTP_PORT = 9090;//Default HTTP Server Port
@@ -243,7 +250,6 @@ public class DLNAClient {
         dlnaContext.cancelSubscribe(service);
     }
 
-
     /* 内部回调方法 */
 
     void findNewDevice(DeviceInfo deviceInfo) {
@@ -318,6 +324,18 @@ public class DLNAClient {
             onCommandExecListener.onCommandExec(service,cmd,isSuccess,msg);
     }
 
+    /* 状态接口方法 */
+    public boolean isRunning() {
+        synchronized (this) {
+            return state == STATE_START_COMPLETED;
+        }
+    }
+
+    public boolean isClosed() {
+        synchronized (this) {
+            return state == STATE_CLOSE;
+        }
+    }
 
     /* 设置接口方法 */
 
